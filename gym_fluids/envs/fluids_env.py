@@ -27,15 +27,18 @@ class FluidsEnv(gym.Env):
     def reset(self):
         del(self.fluidsim)
         self.fluidsim = fluids.FluidSim(**FLUIDS_ARGS)
-        obs, rew = self.fluidsim.step()
         car_keys = list(self.fluidsim.get_control_keys())
+        assert(len(car_keys) == 1)
+        obs = self.fluidsim.get_observations(car_keys)
         return obs[car_keys[0]].get_array()
 
 
     def step(self, action):
         car_keys = list(self.fluidsim.get_control_keys())
+        assert(len(car_keys) == 1)
         actions = {car_keys[0]: fluids.SteeringAction(action[0], action[1])}
-        obs, reward_step = self.fluidsim.step(actions)
+        reward_step = self.fluidsim.step(actions)
+        obs = self.fluidsim.get_observations(car_keys)
 
         done = self.fluidsim.run_time() > TIME_LIMIT
         obs = obs[car_keys[0]].get_array()
