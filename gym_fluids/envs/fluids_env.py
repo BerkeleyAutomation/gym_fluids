@@ -47,3 +47,20 @@ class FluidsEnv(gym.Env):
 
     def render(self, mode='human'):
         self.fluidsim.render()
+
+class FluidsVelEnv(FluidsEnv):
+    def __init__(self):
+        super(FluidsVelEnv, self).__init__()
+        self.action_space = spaces.Box(low=0, high=3, shape=(1,), dtype=np.float32)
+
+    def step(self, action):
+        car_keys = list(self.fluidsim.get_control_keys())
+        assert(len(car_keys) == 1)
+        actions = {car_keys[0]: fluids.VelocityAction(action[0])}
+        reward_step = self.fluidsim.step(actions)
+        obs = self.fluidsim.get_observations(car_keys)
+
+        done = self.fluidsim.run_time() > TIME_LIMIT
+        obs = obs[car_keys[0]].get_array()
+        return obs, reward_step, done, {}
+

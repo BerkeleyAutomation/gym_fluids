@@ -6,3 +6,10 @@ register(
     timestep_limit=1000,
     nondeterministic=True,
     )
+
+register(
+    id="fluids-vel-v2",
+    entry_point="gym_fluids.envs:FluidsVelEnv",
+    timestep_limit=1000,
+    nondeterministic=True
+    )
