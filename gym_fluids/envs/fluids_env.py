@@ -9,13 +9,17 @@ OBS_W = 400
 TIME_LIMIT = 600
 
 FLUIDS_ARGS = {"visualization_level"      :1,
-               "background_cars"          :10,
-               "controlled_cars"          :1,
-               "background_peds"          :5,
                "fps"                      :30,
                "obs_args"                 :{"obs_dim":OBS_W},
                "obs_space"                :fluids.OBS_BIRDSEYE,
                "background_control"       :fluids.BACKGROUND_CSP}
+
+STATE_ARGS = {"layout": fluids.STATE_CITY,
+              "background_cars"          :10,
+              "controlled_cars"          :1,
+              "background_peds"          :5,
+              }
+
 
 class FluidsEnv(gym.Env):
     def __init__(self):
@@ -24,8 +28,7 @@ class FluidsEnv(gym.Env):
         self.observation_space = spaces.Box(low=0, high=255, shape=(OBS_W, OBS_W, 3), dtype=np.uint8)
 
     def reset(self):
-        del(self.fluidsim)
-        self.fluidsim = fluids.FluidSim(**FLUIDS_ARGS)
+        self.fluidsim.set_state(fluids.State(**STATE_ARGS))
         car_keys = list(self.fluidsim.get_control_keys())
         assert(len(car_keys) == 1)
         obs = self.fluidsim.get_observations(car_keys)
