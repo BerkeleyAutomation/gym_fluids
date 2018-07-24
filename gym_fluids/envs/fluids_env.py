@@ -27,7 +27,7 @@ class FluidsEnv(gym.Env):
         self.action_space = spaces.Box(np.array([-1, -1]), np.array([1, 1]))
         self.observation_space = spaces.Box(low=0, high=255, shape=(OBS_W, OBS_W, 3), dtype=np.uint8)
 
-        self.fluids_action_type = fluids.SteeringAction
+        self.fluids_action_type = fluids.SteeringAccAction
         
     def reset(self):
         self.fluidsim.set_state(fluids.State(**STATE_ARGS))
@@ -37,7 +37,7 @@ class FluidsEnv(gym.Env):
         return obs[car_keys[0]].get_array()
 
     def fluids_action_maker(self, action):
-        return fluids.SteeringAction(action[0], action[1])
+        return fluids.SteeringAccAction(action[0], action[1])
 
 
     def step(self, action):
